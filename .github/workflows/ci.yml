@@ -11,12 +11,18 @@ jobs:
     name: Lint Code
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: "18"
           cache: "npm"
-      - run: npm ci
+
+      - name: Install dependencies
+        run: npm ci
+
       - name: Reusable Lint + Prettier
         uses: ./.github/actions/reusable/ci-steps
 
@@ -25,18 +31,27 @@ jobs:
     needs: lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: "18"
           cache: "npm"
-      - run: npm ci
+
+      - name: Install dependencies
+        run: npm ci
+
       - name: Run Tests with Coverage
         run: npm test
+
       - name: List coverage directory
         run: ls -la coverage
+
       - name: Show coverage-final.json content
         run: cat coverage/coverage-final.json || echo "No coverage-final.json found"
+
       - name: ✅ Skip Coverage Enforcement
         run: echo "Skipping coverage check for now"
 
@@ -45,16 +60,23 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: "18"
           cache: "npm"
-      - run: npm ci
+
+      - name: Install dependencies
+        run: npm ci
+
       - name: Simulate Build Output
         run: |
           mkdir dist
           echo "Fake build output" > dist/index.html
+
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
