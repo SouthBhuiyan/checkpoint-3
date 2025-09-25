@@ -1,84 +1,33 @@
-name: CI Pipeline
+name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main, develop]
-  pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
-  lint:
-    name: Lint Code
+  deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload static site
+        uses: actions/upload-pages-artifact@v2
         with:
-          node-version: "18"
-          cache: "npm"
+          path: .
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Reusable Lint + Prettier
-        uses: ./.github/actions/reusable/ci-steps
-
-  test:
-    name: Run Tests
-    needs: lint
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "18"
-          cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run Tests with Coverage
-        run: npm test
-
-      - name: List coverage directory
-        run: ls -la coverage
-
-      - name: Show coverage-final.json content
-        run: cat coverage/coverage-final.json || echo "No coverage-final.json found"
-
-      - name: ✅ Skip Coverage Enforcement
-        run: echo "Skipping coverage check for now"
-
-  build:
-    name: Build App
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "18"
-          cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Simulate Build Output
-        run: |
-          mkdir dist
-          echo "Fake build output" > dist/index.html
-
-      - name: Upload Build Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-output
-          path: dist/
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
