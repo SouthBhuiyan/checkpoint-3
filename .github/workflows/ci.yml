@@ -47,19 +47,19 @@ jobs:
         run: npm ci
 
       - name: Run Tests with Coverage
-        run: npm test # ✅ No extra -- --coverage
+        run: npm test
 
       - name: Enforce 80% Coverage
         run: |
           node -e "
             const fs = require('fs');
-            const p = 'coverage/coverage-summary.json';
+            const p = 'coverage/coverage-final.json';
             if (!fs.existsSync(p)) {
               console.error('❌ No coverage report found');
               process.exit(1);
             }
             const c = JSON.parse(fs.readFileSync(p));
-            const pct = c.total.lines.pct;
+            const pct = c.total?.lines?.pct ?? 0;
             console.log('✅ Line coverage:', pct + '%');
             if (pct < 80) {
               console.error('❌ Coverage below 80%');
