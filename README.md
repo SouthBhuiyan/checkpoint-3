@@ -20,7 +20,6 @@ test("adds 2 + 3 to equal 5", () => {
 });
 ```
 
-
 # Checkpoint 3 – CI/CD Workflow Assignment
 
 ![CI](https://github.com/SouthBhuiyan/checkpoint-3/actions/workflows/ci.yml/badge.svg)
