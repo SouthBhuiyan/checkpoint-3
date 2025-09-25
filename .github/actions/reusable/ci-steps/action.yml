@@ -1,0 +1,12 @@
+name: Reusable CI Steps
+description: Lint and Prettier check
+runs:
+  using: "composite"
+  steps:
+    - name: Run ESLint
+      run: npx eslint . --ext .js,.jsx,.ts,.tsx --max-warnings=0
+      shell: bash
+
+    - name: Run Prettier Check
+      run: npx prettier --check .
+      shell: bash
