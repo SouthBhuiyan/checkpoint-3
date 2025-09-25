@@ -11,44 +11,28 @@ jobs:
     name: Lint Code
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: "18"
           cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run ESLint
-        run: npx eslint . --ext .js,.jsx,.ts,.tsx --max-warnings=0
-
-      - name: Run Prettier Check
-        run: npx prettier --check .
+      - run: npm ci
+      - run: npx eslint . --ext .js,.jsx,.ts,.tsx --max-warnings=0
+      - run: npx prettier --check .
 
   test:
     name: Run Tests
     needs: lint
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: "18"
           cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci
-
+      - run: npm ci
       - name: Run Tests with Coverage
         run: npm test
-
       - name: Enforce 80% Coverage
         run: |
           node -e "
@@ -63,9 +47,10 @@ jobs:
             let coveredLines = 0;
 
             for (const file of Object.values(data)) {
-              const lines = file.lines;
-              totalLines += lines.total;
-              coveredLines += lines.covered;
+              if (file.lines && typeof file.lines.total === 'number' && typeof file.lines.covered === 'number') {
+                totalLines += file.lines.total;
+                coveredLines += file.lines.covered;
+              }
             }
 
             const pct = totalLines === 0 ? 0 : ((coveredLines / totalLines) * 100).toFixed(2);
