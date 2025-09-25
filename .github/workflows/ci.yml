@@ -47,7 +47,7 @@ jobs:
         run: npm ci
 
       - name: Run Tests with Coverage
-        run: npm test   # ✅ No extra -- --coverage
+        run: npm test # ✅ No extra -- --coverage
 
       - name: Enforce 80% Coverage
         run: |
